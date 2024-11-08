@@ -74,7 +74,7 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
       />
       <QuizQuestion 
         questionText={questions[currentQuestion]['Question Text']} 
-        questionArchetypeCode={questions[currentQuestion]['QuestionArchetypeCode']}
+        questionArchetypeCode={questions[currentQuestion]['QuestionArchetypeCode']} // Use the correct case
         onAnswer={handleAnswer} 
         onQuit={handleQuit} // Pass the quit function to QuizQuestion
       />
