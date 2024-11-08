@@ -74,7 +74,7 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
       />
       <QuizQuestion 
         questionText={questions[currentQuestion]['Question Text']} 
-        questionArchetypeCode={questions[currentQuestion]['questionArchetypeCode']} // Pass the archetype code
+        questionArchetypeCode={questions[currentQuestion]['QuestionArchetypeCode']}
         onAnswer={handleAnswer} 
         onQuit={handleQuit} // Pass the quit function to QuizQuestion
       />

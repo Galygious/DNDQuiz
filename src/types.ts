@@ -17,7 +17,7 @@ export interface Question {
   SO_Weight: number;
   ST_Weight: number;
   comments: string;
-  questionArchetypeCode: string;
+  QuestionArchetypeCode: string;
 }
 
 export interface ArchetypeScore {
