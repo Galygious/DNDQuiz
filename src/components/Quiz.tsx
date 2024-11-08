@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentRound, setCurrentRound] = useState(0);
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     archetypes.forEach(archetype => {
@@ -20,8 +20,21 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
     return initial;
   });
 
+  // Group questions by archetype
+  const questionsByArchetype = archetypes.reduce((acc, archetype) => {
+    acc[archetype.abbreviation] = questions.filter(q => q.questionArchetypeCode === archetype.abbreviation);
+    return acc;
+  }, {} as Record<string, Question[]>);
+
+  // Create an array of archetypes in random order for current round
+  const randomizedArchetypes = [...archetypes].sort(() => Math.random() - 0.5);
+  const currentQuestions = randomizedArchetypes.map(archetype => {
+    const availableQuestions = questionsByArchetype[archetype.abbreviation];
+    return availableQuestions.length > 0 ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)] : null;
+  }).filter(Boolean) as Question[];
+
   const handleAnswer = (answer: 'yes' | 'no' | 'maybe') => {
-    const question = questions[currentQuestion];
+    const question = currentQuestions[currentRound];
     const newScores = { ...scores };
 
     if (answer === 'yes') {
@@ -36,11 +49,12 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
 
     setScores(newScores);
 
-    if (currentQuestion === questions.length - 1) {
+    // Move to the next question or finish the quiz
+    if (currentRound === currentQuestions.length - 1) {
       const finalScores = calculateFinalScores(newScores);
       onComplete(finalScores);
     } else {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentRound(prev => prev + 1);
     }
   };
 
@@ -69,11 +83,11 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
       className="max-w-2xl mx-auto p-6"
     >
       <QuizProgress 
-        currentQuestion={currentQuestion} 
-        totalQuestions={questions.length} 
+        currentQuestion={currentRound} 
+        totalQuestions={randomizedArchetypes.length} 
       />
       <QuizQuestion 
-        questionText={questions[currentQuestion]['Question Text']} 
+        questionText={currentQuestions[currentRound]['Question Text'] || "No more questions"} 
         onAnswer={handleAnswer} 
         onQuit={handleQuit} // Pass the quit function to QuizQuestion
       />
