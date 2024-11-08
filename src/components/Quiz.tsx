@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Question, ArchetypeScore } from '../types';
 import { archetypes } from '../data/archetypes';
 import { QuizProgress } from './QuizProgress';
 import { QuizQuestion } from './QuizQuestion';
 
-interface Props {
-  questions: Question[];
-  onComplete: (scores: ArchetypeScore[]) => void;
-}
+// Shuffle the archetypes array
+const shuffleArchetypes = (archetypes: any[]) => {
+  for (let i = archetypes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [archetypes[i], archetypes[j]] = [archetypes[j], archetypes[i]];
+  }
+  return archetypes;
+};
 
-export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: ArchetypeScore[]) => void; }> = ({ questions, onComplete }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     archetypes.forEach(archetype => {
@@ -19,9 +23,45 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
     });
     return initial;
   });
+  const [roundQuestions, setRoundQuestions] = useState<Question[]>([]);
+  const [availableQuestions, setAvailableQuestions] = useState<Question[]>(questions); // State for available questions
+
+  // Function to create the next round of questions
+  const createNextRound = () => {
+    if (availableQuestions.length === 0) {
+      // If no questions are available, finish the quiz
+      const finalScores = calculateFinalScores(scores);
+      onComplete(finalScores);
+      return;
+    }
+
+    // Shuffle archetypes and prepare new round questions
+    const shuffledArchetypes = shuffleArchetypes([...archetypes]);
+    const newRoundQuestions: Question[] = [];
+
+    // Get one question from each archetype in the shuffled order
+    shuffledArchetypes.forEach(archetype => {
+      const archetypeCode = archetype.abbreviation;
+      const questionIndex = availableQuestions.findIndex(q => q.QuestionArchetypeCode === archetypeCode);
+
+      if (questionIndex !== -1) {
+        newRoundQuestions.push(availableQuestions[questionIndex]);
+        availableQuestions.splice(questionIndex, 1); // Remove question from available list
+      }
+    });
+
+    // Update the state with the new round questions and the remaining available questions
+    setRoundQuestions(newRoundQuestions);
+    setAvailableQuestions(prev => [...prev]); // Update available questions state
+    setCurrentQuestionIndex(0);
+  };
+
+  useEffect(() => {
+    createNextRound(); // Create the first round when the component mounts
+  }, []);
 
   const handleAnswer = (answer: 'yes' | 'no' | 'maybe') => {
-    const question = questions[currentQuestion];
+    const question = roundQuestions[currentQuestionIndex];
     const newScores = { ...scores };
 
     if (answer === 'yes') {
@@ -36,11 +76,10 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
 
     setScores(newScores);
 
-    if (currentQuestion === questions.length - 1) {
-      const finalScores = calculateFinalScores(newScores);
-      onComplete(finalScores);
+    if (currentQuestionIndex === roundQuestions.length - 1) {
+      createNextRound(); // Create next round after answering all questions in current round
     } else {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
@@ -69,14 +108,14 @@ export const Quiz: React.FC<Props> = ({ questions, onComplete }) => {
       className="max-w-2xl mx-auto p-6"
     >
       <QuizProgress 
-        currentQuestion={currentQuestion} 
-        totalQuestions={questions.length} 
+        currentQuestion={currentQuestionIndex} 
+        totalQuestions={roundQuestions.length} 
       />
       <QuizQuestion 
-        questionText={questions[currentQuestion]['Question Text']} 
-        questionArchetypeCode={questions[currentQuestion]['QuestionArchetypeCode']} // Use the correct case
+        questionText={roundQuestions[currentQuestionIndex]?.['Question Text']} 
+        questionArchetypeCode={roundQuestions[currentQuestionIndex]?.['QuestionArchetypeCode']} 
         onAnswer={handleAnswer} 
-        onQuit={handleQuit} // Pass the quit function to QuizQuestion
+        onQuit={handleQuit} 
       />
     </motion.div>
   );
