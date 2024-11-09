@@ -118,7 +118,8 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
         totalQuestions={questions.length} // Should reflect the total number of questions (e.g., 160)
       />
       <QuizQuestion 
-        questionText={roundQuestions[currentQuestionIndex]?.['Question Text']} 
+        questionText={roundQuestions[currentQuestionIndex]?.['Question Text']}
+        _questionArchetypeCode=''
         onAnswer={handleAnswer} 
         onQuit={handleQuit} 
       />
