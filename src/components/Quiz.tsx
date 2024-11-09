@@ -15,7 +15,7 @@ const shuffleArchetypes = (archetypes: any[]) => {
 };
 
 export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: ArchetypeScore[]) => void; }> = ({ questions, onComplete }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);  // Keeps track of the current question in the round
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     archetypes.forEach(archetype => {
@@ -24,7 +24,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
     return initial;
   });
   const [roundQuestions, setRoundQuestions] = useState<Question[]>([]);
-  const [availableQuestions, setAvailableQuestions] = useState<Question[]>(questions); // State for available questions
+  const [availableQuestions, setAvailableQuestions] = useState<Question[]>(questions); // All questions available for selection
 
   // Function to create the next round of questions
   const createNextRound = () => {
@@ -52,8 +52,8 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
 
     // Update the state with the new round questions and the remaining available questions
     setRoundQuestions(newRoundQuestions);
-    setAvailableQuestions(prev => [...prev]); // Update available questions state
-    setCurrentQuestionIndex(0);
+    setAvailableQuestions(prev => [...prev]); // Keep track of remaining questions
+    setCurrentQuestionIndex(0); // Reset to the first question in the new round
   };
 
   useEffect(() => {
@@ -77,9 +77,9 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
     setScores(newScores);
 
     if (currentQuestionIndex === roundQuestions.length - 1) {
-      createNextRound(); // Create next round after answering all questions in current round
+      createNextRound(); // Create the next round once all questions in the current round are answered
     } else {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex(prev => prev + 1); // Move to the next question
     }
   };
 
@@ -109,7 +109,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
     >
       <QuizProgress 
         currentQuestion={currentQuestionIndex + 1} // Add 1 for 1-based indexing
-        totalQuestions={questions.length} // Show total questions here (e.g., 160)
+        totalQuestions={questions.length} // Display total questions (e.g., 160)
       />
       <QuizQuestion 
         questionText={roundQuestions[currentQuestionIndex]?.['Question Text']} 
