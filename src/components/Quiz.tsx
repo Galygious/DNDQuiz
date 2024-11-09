@@ -108,7 +108,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
       className="max-w-2xl mx-auto p-6"
     >
       <QuizProgress 
-        currentQuestion={currentQuestionIndex + 1} // Add 1 for 1-based indexing
+        currentQuestion={currentQuestionIndex} // Add 1 for 1-based indexing
         totalQuestions={questions.length} // Show total questions here
       />
       <QuizQuestion 
