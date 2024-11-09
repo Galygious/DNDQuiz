@@ -77,9 +77,9 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
     setScores(newScores);
 
     if (currentQuestionIndex === roundQuestions.length - 1) {
-      createNextRound(); // Create the next round once all questions in the current round are answered
+      createNextRound(); // Create the next round after completing the current round
     } else {
-      setCurrentQuestionIndex(prev => prev + 1); // Move to the next question
+      setCurrentQuestionIndex(prev => prev + 1); // Move to the next question in the current round
     }
   };
 
@@ -91,7 +91,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
   const calculateFinalScores = (rawScores: Record<string, number>): ArchetypeScore[] => {
     const min = Math.min(...Object.values(rawScores));
     const max = Math.max(...Object.values(rawScores));
-    
+
     const scaledScores: ArchetypeScore[] = archetypes.map(archetype => ({
       name: archetype.name,
       abbreviation: archetype.abbreviation,
@@ -109,7 +109,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
     >
       <QuizProgress 
         currentQuestion={currentQuestionIndex + 1} // Add 1 for 1-based indexing
-        totalQuestions={questions.length} // Display total questions (e.g., 160)
+        totalQuestions={questions.length} // Show total questions (e.g., 160)
       />
       <QuizQuestion 
         questionText={roundQuestions[currentQuestionIndex]?.['Question Text']} 
