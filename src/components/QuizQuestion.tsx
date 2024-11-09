@@ -7,7 +7,7 @@ interface QuizQuestionProps {
   onQuit: () => void; // Prop for quit functionality
 }
 
-export const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionText, _questionArchetypeCode, onAnswer, onQuit }) => {
+export const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionText/*, _questionArchetypeCode*/, onAnswer, onQuit }) => { 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
       <h2 className="text-xl font-semibold mb-6">{questionText}</h2>
