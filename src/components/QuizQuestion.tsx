@@ -2,9 +2,9 @@ import React from 'react';
 
 interface QuizQuestionProps {
   questionText: string;
-  _questionArchetypeCode: string; // New prop for archetype code
+  _questionArchetypeCode?: string; // Make this prop optional
   onAnswer: (answer: 'yes' | 'no' | 'maybe') => void;
-  onQuit: () => void; // Prop for quit functionality
+  onQuit: () => void;
 }
 
 export const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionText/*, _questionArchetypeCode*/, onAnswer, onQuit }) => { 

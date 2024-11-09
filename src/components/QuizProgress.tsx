@@ -6,7 +6,7 @@ interface QuizProgressProps {
 }
 
 export const QuizProgress: React.FC<QuizProgressProps> = ({ currentQuestion, totalQuestions }) => {
-  const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  const progress = (currentQuestion / totalQuestions) * 100;
 
   return (
     <div className="mb-8">
@@ -17,7 +17,7 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({ currentQuestion, tot
         />
       </div>
       <p className="text-center mt-2 text-gray-600">
-        Question {currentQuestion + 1} of {totalQuestions}
+        Question {currentQuestion} of {totalQuestions}
       </p>
     </div>
   );
