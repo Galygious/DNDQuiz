@@ -113,7 +113,7 @@ export const Quiz: React.FC<{ questions: Question[]; onComplete: (scores: Archet
       />
       <QuizQuestion 
         questionText={roundQuestions[currentQuestionIndex]?.['Question Text']} 
-        questionArchetypeCode={roundQuestions[currentQuestionIndex]?.['QuestionArchetypeCode']} 
+        _questionArchetypeCode={roundQuestions[currentQuestionIndex]?.['QuestionArchetypeCode']} 
         onAnswer={handleAnswer} 
         onQuit={handleQuit} 
       />
